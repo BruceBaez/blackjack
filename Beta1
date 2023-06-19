@@ -1,0 +1,213 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int generarAleatorio(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
+int valorCarta(int carta) {
+    if (carta >= 2 && carta <= 10)
+        return carta;
+    else if (carta >= 11 && carta <= 13)
+        return 10;
+    else
+        return 1;
+}
+
+void jugarBlackjack() {
+    int vidasJugador = 3;
+    int vidasCrupier = 3;
+    int ronda = 1;
+
+    while (vidasJugador > 0 && vidasCrupier > 0) {
+        printf("Ronda: %d\n", ronda);
+        printf("Vidas Jugador: %d\n", vidasJugador);
+        printf("Vidas Crupier: %d\n", vidasCrupier);
+
+        int cartasDisponibles[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int numCartasDisponibles = 10;
+
+        int cartaJugador;
+        int puntuacionJugador = 0;
+        int puntuacionCrupier = 0;
+
+        int indiceCartaSeleccionada = generarAleatorio(0, numCartasDisponibles - 1);
+        cartaJugador = cartasDisponibles[indiceCartaSeleccionada];
+        for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
+            cartasDisponibles[i] = cartasDisponibles[i + 1];
+        }
+        numCartasDisponibles--;
+
+        indiceCartaSeleccionada = generarAleatorio(0, numCartasDisponibles - 1);
+        int nuevaCartaCrupier = cartasDisponibles[indiceCartaSeleccionada];
+        for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
+            cartasDisponibles[i] = cartasDisponibles[i + 1];
+        }
+        numCartasDisponibles--;
+
+        puntuacionJugador = valorCarta(cartaJugador);
+        puntuacionCrupier = valorCarta(nuevaCartaCrupier);
+
+        printf("Jugador: %d\n", puntuacionJugador);
+        printf("Crupier: %d\n", puntuacionCrupier);
+
+        char opcion;
+        printf("Deseas pedir una nueva carta? (s/n): ");
+        scanf(" %c", &opcion);
+
+        int numCartasJugador = 1;
+        int salirRonda = 0;
+
+        for (; opcion == 's' && puntuacionJugador < 21 && numCartasJugador < 5; numCartasJugador++) {
+            if (numCartasDisponibles == 0) {
+                printf("No quedan cartas disponibles.\n");
+                break;
+            }
+
+            indiceCartaSeleccionada = generarAleatorio(0, numCartasDisponibles - 1);
+            int nuevaCarta = cartasDisponibles[indiceCartaSeleccionada];
+            for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
+                cartasDisponibles[i] = cartasDisponibles[i + 1];
+            }
+            numCartasDisponibles--;
+
+            puntuacionJugador += valorCarta(nuevaCarta);
+            printf("Carta recibida: %d\n", nuevaCarta);
+            printf("Puntuacion actual: %d\n", puntuacionJugador);
+
+            if (puntuacionJugador >= 21) {
+                salirRonda = 1;
+                break;
+            }
+
+            if (numCartasJugador < 4) {
+                printf("Deseas pedir otra carta? (s/n): ");
+                scanf(" %c", &opcion);
+            }
+        }
+
+        if (!salirRonda) {
+            for (; puntuacionCrupier < 16 && puntuacionJugador <= 21; puntuacionCrupier += valorCarta(nuevaCartaCrupier)) {
+                if (numCartasDisponibles == 0) {
+                    printf("No quedan cartas disponibles.\n");
+                    break;
+                }
+
+                indiceCartaSeleccionada = generarAleatorio(0, numCartasDisponibles - 1);
+                nuevaCartaCrupier = cartasDisponibles[indiceCartaSeleccionada];
+                for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
+                    cartasDisponibles[i] = cartasDisponibles[i + 1];
+                }
+                numCartasDisponibles--;
+            }
+        }
+
+        printf("Puntuacion final:\n");
+        printf("Jugador: %d\n", puntuacionJugador);
+        printf("Crupier: %d\n", puntuacionCrupier);
+
+        if (puntuacionJugador > 21) {
+            vidasJugador--;
+            printf("Te has pasado de 21. Vidas restantes Jugador: %d\n", vidasJugador);
+        } else if (puntuacionCrupier > 21) {
+            vidasCrupier--;
+            printf("Jugador gana! El crupier se ha pasado de 21. Vidas restantes Crupier: %d\n", vidasCrupier);
+        } else if (puntuacionJugador == puntuacionCrupier) {
+            printf("Empate!\n");
+        } else if (puntuacionJugador > puntuacionCrupier) {
+            printf("Jugador gana!\n");
+            vidasCrupier--;
+        } else {
+            printf("Crupier gana!\n");
+            vidasJugador--;
+            printf("Vidas restantes Jugador: %d\n", vidasJugador);
+        }
+
+        ronda++;
+
+        printf("Presiona enter para continuar...\n");
+        while (getchar() != '\n');
+        getchar();
+    }
+
+    if (vidasJugador == 0) {
+        printf("Te has quedado sin vidas. Fin del juego.\n");
+    } else {
+        printf("El crupier se ha quedado sin vidas. ¡Felicidades! Has ganado.\n");
+    }
+}
+
+int main() {
+    int a = 0;
+
+    printf(" _____ __    _____ _____ _____       __ _____ _____ _____    _____ _____ _____ _____ _____ _____ _____\n");
+    printf("| __  |  |  |  _  |     |  |  |   __|  |  _  |     |  |  |  |     |  _  |   __|_   _|   __| __  |   __|\n");
+    printf("| __ -|  |__|     |   --|    -|  |  |  |     |   --|    -|  | | | |     |__   | | | |   __|    -|__   |\n");
+    printf("|_____|_____|__|__|_____|__|__|  |_____|__|__|_____|__|__|  |_|_|_|__|__|_____| |_| |_____|__|__|_____|\n\n");
+
+    while (a != 3) {
+        printf("1-Jugar\n");
+        printf("2-Ranking\n");
+        printf("3-Salir\n");
+        printf("Eliga una opcion valida (ingrese 1, 2 o 3): ");
+        scanf("%d", &a);
+
+        switch (a) {
+            case 1:
+                printf("1-0 Jugadores\n");
+                printf("2-1 Jugador\n");
+                printf("3-Salir\n");
+                printf("Eliga una opcion valida (ingrese 1, 2 o 3): ");
+                scanf("%d", &a);
+
+                switch (a) {
+                    case 1:
+                        // Código para la opción 1-0 Jugadores
+                        break;
+                    case 2:
+                        printf("1-Modo Basico\n");
+                        printf("2-Modo Avanzado\n");
+                        printf("3-Salir\n");
+                        printf("Eliga una opcion valida (ingrese 1, 2 o 3): ");
+                        scanf("%d", &a);
+
+                        switch (a) {
+                            case 1:
+                                jugarBlackjack();
+                                break;
+                            case 2:
+                                // Código para el modo avanzado
+                                break;
+                            case 3:
+                                printf("///////Gracias por jugar/////\n");
+                                return 0;
+                            default:
+                                printf("Opcion no valida, ingrese una correcta:\n");
+                                break;
+                        }
+                        break;
+                    case 3:
+                        printf("///////Gracias por jugar/////\n");
+                        return 0;
+                    default:
+                        printf("Opcion no valida, ingrese una correcta:\n");
+                        break;
+                }
+                break;
+            case 2:
+                // Código para la opción 2-Ranking
+                break;
+            case 3:
+                printf("///////Gracias por jugar/////\n");
+                return 0;
+            default:
+                printf("Opcion no valida, ingrese una correcta:\n");
+                break;
+        }
+    }
+
+    printf("Programa finalizado\n");
+
+    return 0;
+}
