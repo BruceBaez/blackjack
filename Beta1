@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+
+
+typedef struct {
+    char nombre[50];
+    int puntaje;
+} EntradaRanking;
+EntradaRanking rankingJugador;
 
 int generarAleatorio(int min, int max) {
     return min + rand() % (max - min + 1);
@@ -15,9 +23,9 @@ int valorCarta(int carta) {
         return 1;
 }
 
-void jugarBlackjack() {
-    int vidasJugador = 3;
-    int vidasCrupier = 3;
+int jugarBlackjack(char* nombre) {
+    int vidasJugador = 1;
+    int vidasCrupier = 0;
     int ronda = 1;
 
     while (vidasJugador > 0 && vidasCrupier > 0) {
@@ -133,13 +141,16 @@ void jugarBlackjack() {
 
     if (vidasJugador == 0) {
         printf("Te has quedado sin vidas. Fin del juego.\n");
+        return 0;
     } else {
         printf("El crupier se ha quedado sin vidas. ¡Felicidades! Has ganado.\n");
+        rankingJugador.puntaje++;
+        return 1;
     }
 }
-
 int main() {
     int a = 0;
+    int resultado=0;
 
     printf(" _____ __    _____ _____ _____       __ _____ _____ _____    _____ _____ _____ _____ _____ _____ _____\n");
     printf("| __  |  |  |  _  |     |  |  |   __|  |  _  |     |  |  |  |     |  _  |   __|_   _|   __| __  |   __|\n");
@@ -174,7 +185,9 @@ int main() {
 
                         switch (a) {
                             case 1:
-                                jugarBlackjack();
+                                printf("Ingrese su nombre: ");
+                                scanf("%s", rankingJugador.nombre);
+                                resultado = jugarBlackjack(rankingJugador.nombre);
                                 break;
                             case 2:
                                 // Código para el modo avanzado
@@ -197,6 +210,9 @@ int main() {
                 break;
             case 2:
                 // Código para la opción 2-Ranking
+                printf("////////Ranking//////\n");
+                printf("La puntuacion de %s es:%d\n",rankingJugador.nombre, rankingJugador.puntaje);
+                return 0;
                 break;
             case 3:
                 printf("///////Gracias por jugar/////\n");
