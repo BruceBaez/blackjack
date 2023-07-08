@@ -10,6 +10,7 @@ typedef struct {                //Struct que contiene el nombre y el puntaje del
 } EntradaRanking;
 EntradaRanking rankingJugador;
 
+
 int generarAleatorio(int min, int max) {            //Funcion para numero aleatorio de la bibloteca stdlib.h     
     return min + rand() % (max - min + 1);
 }
@@ -25,7 +26,7 @@ int valorCarta(int carta) {                         //Esta función recibe el nu
 
 int jugarBlackjack(char* nombre) {      //Funcion que recibe el nombre del jugador y simula el modo basico
     int vidasJugador = 1;
-    int vidasCrupier = 0;
+    int vidasCrupier = 1;
     int ronda = 1;
 
     while (vidasJugador > 0 && vidasCrupier > 0) {  //imprime informacion de la ronda y estadisticas
@@ -148,7 +149,140 @@ int jugarBlackjack(char* nombre) {      //Funcion que recibe el nombre del jugad
         return 1;
     }
 }   
-int main() {                //Main del programa, se usa un switch-case anidados para crearlo
+int jugarSimulacionBlackjack() {   //esta funcion es similar a jugarblackjack, solo que aqui las decisiones del jugador se hacen de forma automatica.
+    int vidasJugador = 1;
+    int vidasCrupier = 1;
+    int ronda = 1;
+
+    while (vidasJugador > 0 && vidasCrupier > 0) {
+        printf("Ronda: %d\n", ronda);
+        printf("Vidas Jugador: %d\n", vidasJugador);
+        printf("Vidas Crupier: %d\n", vidasCrupier);
+
+        int cartasDisponibles[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int numCartasDisponibles = 10;
+
+        int cartaJugador;
+        int puntuacionJugador = 0;
+        int puntuacionCrupier = 0;
+
+        int indiceCartaSeleccionada = generarAleatorio(0, numCartasDisponibles - 1);
+        cartaJugador = cartasDisponibles[indiceCartaSeleccionada];
+        for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
+            cartasDisponibles[i] = cartasDisponibles[i + 1];
+        }
+        numCartasDisponibles--;
+
+        int nuevaCartaCrupier;
+        int indiceCartaCrupier = generarAleatorio(0, numCartasDisponibles - 1);
+        nuevaCartaCrupier = cartasDisponibles[indiceCartaCrupier];
+        for (int i = indiceCartaCrupier; i < numCartasDisponibles - 1; i++) {
+            cartasDisponibles[i] = cartasDisponibles[i + 1];
+        }
+        numCartasDisponibles--;
+
+        puntuacionJugador = valorCarta(cartaJugador);
+        puntuacionCrupier = valorCarta(nuevaCartaCrupier);
+
+        printf("Jugador: %d\n", puntuacionJugador);
+        printf("Crupier: %d\n", puntuacionCrupier);
+
+        char opcion;                                                           //aqui es donde se modifica el codigo, donde simplemente el bot saca carta dependiendo si su puntacion es menor o no a 16
+        if (puntuacionJugador < 16) {
+            opcion = 's';
+        } else {
+            opcion = 'n';
+        }
+
+        int numCartasJugador = 1;
+        int salirRonda = 0;
+
+        for (; opcion == 's' && puntuacionJugador < 21 && numCartasJugador < 5; numCartasJugador++) {
+            if (numCartasDisponibles == 0) {
+                printf("No quedan cartas disponibles.\n");
+                break;
+            }
+
+            indiceCartaSeleccionada = generarAleatorio(0, numCartasDisponibles - 1);
+            int nuevaCarta = cartasDisponibles[indiceCartaSeleccionada];
+            for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
+                cartasDisponibles[i] = cartasDisponibles[i + 1];
+            }
+            numCartasDisponibles--;
+
+            puntuacionJugador += valorCarta(nuevaCarta);
+            printf("Carta recibida: %d\n", nuevaCarta);
+            printf("Puntuacion actual: %d\n", puntuacionJugador);
+
+            if (puntuacionJugador >= 21) {
+                salirRonda = 1;
+                break;
+            }
+
+            if (numCartasJugador < 4) {
+                if (puntuacionJugador < 16) {  // El bot decide si pedir otra carta o no
+                    opcion = 's';
+                } else {
+                    opcion = 'n';
+                }
+            }
+        }
+
+        if (!salirRonda) {
+            for (; puntuacionCrupier < 16 && puntuacionCrupier < 21; puntuacionCrupier += valorCarta(nuevaCartaCrupier)) {
+                if (numCartasDisponibles == 0) {
+                    printf("No quedan cartas disponibles.\n");
+                    break;
+                }
+
+                indiceCartaCrupier = generarAleatorio(0, numCartasDisponibles - 1);
+                nuevaCartaCrupier = cartasDisponibles[indiceCartaCrupier];
+                for (int i = indiceCartaCrupier; i < numCartasDisponibles - 1; i++) {
+                    cartasDisponibles[i] = cartasDisponibles[i + 1];
+                }
+                numCartasDisponibles--;
+            }
+        }
+
+        printf("Puntuacion final:\n");
+        printf("Jugador: %d\n", puntuacionJugador);
+        printf("Crupier: %d\n", puntuacionCrupier);
+
+        if (puntuacionJugador > 21) {
+            vidasJugador--;
+            printf("Te has pasado de 21. Vidas restantes Jugador: %d\n", vidasJugador);
+        } else if (puntuacionCrupier > 21) {
+            vidasCrupier--;
+            printf("Jugador gana! El crupier se ha pasado de 21. Vidas restantes Crupier: %d\n", vidasCrupier);
+        } else if (puntuacionJugador == puntuacionCrupier) {
+            printf("Empate!\n");
+        } else if (puntuacionJugador > puntuacionCrupier) {
+            printf("Jugador gana!\n");
+            vidasCrupier--;
+        } else {
+            printf("Crupier gana!\n");
+            vidasJugador--;
+            printf("Vidas restantes Jugador: %d\n", vidasJugador);
+        }
+
+        ronda++;
+        printf("Presiona enter para continuar...\n");
+        while (getchar() != '\n');
+        getchar();
+    }
+
+    if (vidasJugador == 0) {
+        printf("Te has quedado sin vidas. Fin del juego.\n");
+        return 0;
+    } else {
+        printf("El crupier se ha quedado sin vidas. ¡Felicidades! Has ganado.\n");
+  
+        return 1;
+    }
+}
+
+
+int main() {                //Main y menu del programa, se usa un switch-case anidados para crearlo
     int a = 0;
     int resultado=0;
 
@@ -174,7 +308,7 @@ int main() {                //Main del programa, se usa un switch-case anidados 
 
                 switch (a) {
                     case 1:
-                        // Código para la opción 1-0 Jugadores
+                        jugarSimulacionBlackjack();
                         break;
                     case 2:
                         printf("1-Modo Basico\n");
