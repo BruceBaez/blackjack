@@ -9,7 +9,7 @@ typedef struct {                //Struct que contiene el nombre y el puntaje del
     int puntaje;
 } EntradaRanking;
 EntradaRanking rankingJugador;
-// Declaración del prototipo de la función buscarMejorJugada
+// Declaración del prototipo de la funcion buscarMejorJugada
 int buscarMejorJugada(int puntuacionCrupier, int *cartasDisponibles, int numCartasDisponibles, int puntuacionJugador);
 
 int generarAleatorio(int min, int max) {            //Funcion para numero aleatorio de la bibloteca stdlib.h     
@@ -34,15 +34,15 @@ int obtenerCartaDelCrupier(int numCartasCrupier,int cartasCrupier[5]) {
 
     return nuevaCartaCrupier;
 }
-// Función que realiza la búsqueda en espacio de soluciones para que el crupier encuentre la mejor jugada
+// Función que realiza la busqueda en espacio de soluciones para que el crupier encuentre la mejor jugada
 int buscarMejorJugadaCrupier(int puntuacionCrupier, int *cartasDisponibles, int numCartasDisponibles, int puntuacionJugador) {
     if (puntuacionCrupier > 21) {
-        // Si la puntuación del crupier supera 21, devuelve una puntuación inválida
+        // Si la puntuacion del crupier supera 21, devuelve una puntuacion inválida
         return -1;
     }
 
     if (numCartasDisponibles == 0) {
-        // Si no quedan cartas disponibles, devuelve la puntuación actual del crupier
+        // Si no quedan cartas disponibles, devuelve la puntuacion actual del crupier
         return puntuacionCrupier;
     }
 
