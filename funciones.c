@@ -95,7 +95,7 @@ identificamos la accion con el numero accion
 12 seleccion opcion salir en menu principal
 *añadir mas casos si se requiere*
 */
-int log_partida(FILE *log,time_t inicioMovimiento, int accion, int numeroCarta, int numero1,int numero2,int numero3){
+int log_partida(FILE *log,time_t inicioMovimiento, int accion, int numero1,int numero2,int numero3){
     log = fopen("log.h","a");
     time_t hora = time(NULL);
     //tiempo total del movimiento
