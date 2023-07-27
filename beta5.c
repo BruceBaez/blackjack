@@ -51,7 +51,7 @@ int buscarMejorJugadaCrupier(int puntuacionCrupier, int *cartasDisponibles, int 
     for (int i = 0; i < numCartasDisponibles; i++) {
         int nuevaPuntuacion = puntuacionCrupier + valorCarta(cartasDisponibles[i]);
 
-        // Actualiza el mazo después de repartir la carta al crupier
+        // Actualiza el mazo despues de repartir la carta al crupier
         int cartasDisponiblesNueva[10];
         memcpy(cartasDisponiblesNueva, cartasDisponibles, sizeof(int) * numCartasDisponibles);
         for (int j = i; j < numCartasDisponibles - 1; j++) {
@@ -60,10 +60,10 @@ int buscarMejorJugadaCrupier(int puntuacionCrupier, int *cartasDisponibles, int 
 
         int nuevaNumCartasDisponibles = numCartasDisponibles - 1;
 
-        // Realiza recursión para seguir buscando la mejor jugada
+        // Realiza recursion para seguir buscando la mejor jugada
         int nuevaMejorPuntuacion = buscarMejorJugadaCrupier(nuevaPuntuacion, cartasDisponiblesNueva, nuevaNumCartasDisponibles, puntuacionJugador);
 
-        // Si la nueva puntuación del crupier es inválida (superó 21) o es mayor que la mejor encontrada hasta ahora, actualiza la mejor puntuación
+        // Si la nueva puntuacion del crupier es invalida (supero 21) o es mayor que la mejor encontrada hasta ahora, actualiza la mejor puntuacion
         if (nuevaMejorPuntuacion == -1 || nuevaMejorPuntuacion > mejorPuntuacion) {
             mejorPuntuacion = nuevaMejorPuntuacion;
         }
@@ -74,10 +74,10 @@ int buscarMejorJugadaCrupier(int puntuacionCrupier, int *cartasDisponibles, int 
 
 // Función para que el crupier juegue su mano utilizando la Búsqueda en Espacio de Soluciones
 void jugarManoCrupier(int *puntuacionCrupier, int *cartasDisponibles, int *numCartasDisponibles, int puntuacionJugador) {
-    // Realiza la búsqueda en espacio de soluciones para encontrar la mejor puntuación
+    // Realiza la busqueda en espacio de soluciones para encontrar la mejor puntuacion
     int mejorPuntuacion = buscarMejorJugadaCrupier(*puntuacionCrupier, cartasDisponibles, *numCartasDisponibles, puntuacionJugador);
 
-    // El crupier toma cartas hasta alcanzar o superar la mejor puntuación encontrada
+    // El crupier toma cartas hasta alcanzar o superar la mejor puntuacion encontrada
     while (*puntuacionCrupier < mejorPuntuacion && *puntuacionCrupier <= 21) {
         if (*numCartasDisponibles == 0) {
             printf("No quedan cartas disponibles para el crupier.\n");
@@ -90,7 +90,7 @@ void jugarManoCrupier(int *puntuacionCrupier, int *cartasDisponibles, int *numCa
         *puntuacionCrupier += valorCarta(nuevaCartaCrupier);
         printf("Crupier recibe carta: %d\n", nuevaCartaCrupier);
 
-        // Actualiza el mazo después de repartir la carta al crupier
+        // Actualiza el mazo despues de repartir la carta al crupier
         for (int i = indiceCartaSeleccionada; i < *numCartasDisponibles - 1; i++) {
             cartasDisponibles[i] = cartasDisponibles[i + 1];
         }
@@ -302,7 +302,7 @@ int jugarSimulacionBlackjack() {   //esta funcion es similar a jugarblackjack, s
         }
 
         if (!salirRonda) { 
-                // El crupier juega su mano utilizando la Búsqueda en Espacio de Soluciones
+                // El crupier juega su mano utilizando la Busqueda en Espacio de Soluciones
                 printf("Turno del Crupier:\n");
                 int mejorPuntuacionCrupier = buscarMejorJugadaCrupier(puntuacionCrupier, cartasDisponibles, numCartasDisponibles, puntuacionJugador);
                 while (puntuacionCrupier < mejorPuntuacionCrupier && puntuacionCrupier <= 21) {
@@ -317,7 +317,7 @@ int jugarSimulacionBlackjack() {   //esta funcion es similar a jugarblackjack, s
                     puntuacionCrupier += valorCarta(nuevaCartaCrupier);
                     printf("Crupier recibe carta: %d\n", nuevaCartaCrupier);
 
-                    // Actualiza el mazo después de repartir la carta al crupier
+                    // Actualiza el mazo despues de repartir la carta al crupier
                     for (int i = indiceCartaSeleccionada; i < numCartasDisponibles - 1; i++) {
                         cartasDisponibles[i] = cartasDisponibles[i + 1];
                     }
